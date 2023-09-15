@@ -62,18 +62,32 @@ class Common{
 
     // Load Total Action
     function totalView($path){
-        $income = array_sum(array_column($this->getSaveData($path,'income'), "value"));
-        $expense = array_sum(array_column($this->getSaveData($path,'expense'), "value"));
-        $total = ($income - $expense);
+        $getIncome = $this->getSaveData($path,'income');
+        $getExpense = $this->getSaveData($path,'expense');
+        if (is_array($getIncome) || is_array($getExpense)) {
 
-        $this->data = '';
-        $this->data .= "Income: $income \n";
-        $this->data .= "Expense: $expense \n";
-        $this->data .= "Total: $total \n";
-
-        $this->display("\n");
-        $this->display($this->data);
-        $this->display("\n");
+            $income = array_sum(array_column(is_array($getIncome) ? $getIncome : ["0" => 0], "value"));
+            $expense = array_sum(array_column(is_array($getExpense) ? $getExpense : ["0" => 0], "value"));
+            $total = ($income - $expense);
+    
+            $this->data = '';
+            $this->data .= "Income: $income \n";
+            $this->data .= "Expense: $expense \n";
+            $this->data .= "Total: $total \n";
+    
+            $this->display("\n");
+            $this->display($this->data);
+            $this->display("\n");
+        }else{
+            $this->display("\n");
+            if (!empty($getIncome) || !empty($getExpense)) {
+                $this->display($getIncome ?? $getExpense);
+            }else{
+                $this->display("Something wrong!\n");
+            }
+           
+            $this->display("\n");
+        }
     }
 
     // Load Categories
