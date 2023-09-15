@@ -1,0 +1,30 @@
+{
+    "income": [
+        {
+            "value": "50",
+            "cat": "Salary"
+        },
+        {
+            "value": "20",
+            "cat": "Rent"
+        },
+        {
+            "value": "10",
+            "cat": "Business"
+        },
+        {
+            "value": "100",
+            "cat": "Salary"
+        }
+    ],
+    "expense": [
+        {
+            "value": "20",
+            "cat": "Family"
+        },
+        {
+            "value": "5",
+            "cat": "Sadakah"
+        }
+    ]
+}

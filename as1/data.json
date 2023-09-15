@@ -1,0 +1,22 @@
+{
+    "income": [
+        {
+            "value": 10,
+            "cat": "salary"
+        },
+        {
+            "value": 20,
+            "cat": "Rent"
+        }
+    ],
+    "expense": [
+        {
+            "value": 5,
+            "cat": "gift"
+        },
+        {
+            "value": 3,
+            "cat": "car"
+        }
+    ]
+}

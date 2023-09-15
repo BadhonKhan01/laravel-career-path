@@ -5,6 +5,7 @@ class Load{
     public $features;
     public $cat;
     public $selected;
+    public $filename;
 
     function __construct(){
         $this->features = ['Add income', 'Add expense', 'View income', 'View expense', 'View total', 'View categories'];  
@@ -12,6 +13,7 @@ class Load{
             'income' => ['Salary','Business','Rent'],
             'expense' => ['Family','Personal','Recreation', 'Sadakah','Gift']
         ];
+        $this->filename = 'data.json';
     }
 
     // Helper Display
@@ -40,7 +42,28 @@ class Load{
 
     // Helper Read Line
     function selectOption(){
-        $this->selected = (int) readline('');
+        $this->selected = (int) readline();
+    }
+
+    // Helper Save Data
+    function save($type, $data){
+        if (file_exists($this->filename)) {
+            $file = fopen($this->filename, 'a');
+            if ($file) {
+                $jsonString = file_get_contents($this->filename);
+                $oldData = json_decode($jsonString, true);
+                $oldData[$type][] = $data;
+                file_put_contents($this->filename, json_encode($oldData, JSON_PRETTY_PRINT) . "\n");
+            }
+        }else{
+            $newData[$type][] = $data;
+            $this->data = '';
+            if (file_put_contents($this->filename, json_encode($newData, JSON_PRETTY_PRINT) . "\n")) {
+                $this->data = "Record saved successfully. \n";
+            } else {
+                $this->data = "Something wrong! please try again. \n";
+            }
+        }
     }
 
     // Load Features
@@ -55,11 +78,73 @@ class Load{
     function income(){
         $incVal = (int) readline('Enter income value: ');
         $incCat = readline('Enter income category: ');
-        $data['income'][] = [
-            'value' => $incVal,
-            'cat' => $incCat
-        ];
-        var_dump($data);
+        $data = [ 'value' => $incVal, 'cat' => $incCat ];
+        $this->save('income', $data);
+        $this->run();
+    }
+
+    // Load View Income
+    function incomeView(){
+        $file = fopen($this->filename, 'a');
+        if ($file) {
+            $jsonString = file_get_contents($this->filename);
+            $loadData = json_decode($jsonString, true);
+            $this->data = '';
+            $this->data .= $this->title("Your Income List");
+            foreach ($loadData['income'] as $item) {
+                $this->data .=$item['cat'] . ' : ' . $item['value'] ."\n";
+            }
+            $this->data .= "\n";
+
+            $this->display();
+            $this->run();
+        }
+    }
+
+    // Load View Expense
+    function expenseView(){
+        $file = fopen($this->filename, 'a');
+        if ($file) {
+            $jsonString = file_get_contents($this->filename);
+            $loadData = json_decode($jsonString, true);
+            $this->data = '';
+            $this->data .= $this->title("Your Income List");
+            foreach ($loadData['expense'] as $item) {
+                $this->data .=$item['cat'] . ' : ' . $item['value'] ."\n";
+            }
+            $this->data .= "\n";
+
+            $this->display();
+            $this->run();
+        }
+    }
+
+    // Load Total Action
+    function totalView(){
+        $jsonString = file_get_contents($this->filename);
+        $loadData = json_decode($jsonString, true);
+
+        $incomeValues = array_column($loadData["income"], "value");
+        $expenseValues = array_column($loadData["expense"], "value");
+
+        $totalIncome = array_sum($incomeValues);
+        $totalExpense = array_sum($expenseValues);
+
+        $this->data = '';
+        $this->data .= "Total Income: $totalIncome \n";
+        $this->data .= "Total Expense: $totalExpense \n";
+
+        $this->display();
+        $this->run();
+    }
+
+    // Load Add Expense
+    function expense(){
+        $incVal = (int) readline('Enter expense value: ');
+        $incCat = readline('Enter expense category: ');
+        $data = [ 'value' => $incVal, 'cat' => $incCat ];
+        $this->save('expense', $data);
+        $this->run();
     }
 
     // Load Categeories
@@ -67,12 +152,12 @@ class Load{
         foreach ($this->categories as $key => $val) {
             if('income' == $key){
                 $this->data = $this->title("Income Categories: ");
-                $this->data .= $this->concatLoop($this->features);
+                $this->data .= $this->concatLoop($this->categories[$key]);
                 $this->display();
             }
             if('expense' == $key){
                 $this->data = $this->title("Expance Categories: ");
-                $this->data .= $this->concatLoop($this->features);
+                $this->data .= $this->concatLoop($this->categories[$key]);
                 $this->display();
             }
         }
@@ -81,9 +166,32 @@ class Load{
 
     // Load Action
     function loadAction(){
+        // Income Action
         if(1 === $this->selected){
             $this->income();
         }
+
+        // Expense Action
+        if(2 === $this->selected){
+            $this->expense();
+        }
+
+        // View Income Action
+        if(3 === $this->selected){
+            $this->incomeView();
+        }
+
+        // View Income Action
+        if(4 === $this->selected){
+            $this->expenseView();
+        }
+
+        // View Income Action
+        if(5 === $this->selected){
+            $this->totalView();
+        }
+
+        // Categories Action
         if(6 === $this->selected){
             $this->showCategories();
         }
@@ -98,80 +206,3 @@ class Load{
 }
 $load = new Load();
 $load->run();
-
-
-
-
-
-
-
-
-
-
-// // Load Our Features
-// function load(){
-//     global $features, $data;
-//     $output = title("What do you want to do?");
-//     $output .= concatLoop($features);
-//     $output .= "\n";
-//     display($output);
-
-//     // Select Feature
-//     $selectFeatures = (int) readline('');
-
-//     if (1 === $selectFeatures) {
-//         $incVal = (int) readline('Enter a value: ');
-//         $incCat = readline('Enter a category: ');
-//         $data['income'][] = [
-//             'value' => $incVal,
-//             'cat' => $incCat
-//         ];
-//         var_dump($data);
-//     }
-
-//     // Display Categories
-//     if(6 === $selectFeatures){
-//         global $inCat, $exCat;
-        
-//         // Display Income
-//         $inc = title("Income Categories: ");
-//         $inc .= concatLoop($inCat);
-//         $inc .= "\n";
-//         display($inc);
-
-//         // Display Expance
-//         $exp = title("Expance Categories: ");
-//         $exp .= concatLoop($exCat);
-//         $exp .= "\n";
-//         display($exp);
-
-//         load();
-//     }
-
-// }
-// load(); // Main fun Loaded
-
-// // Load Helper functions
-// function display($content){
-//     printf($content);
-// }
-
-// function concatLoop($data){
-//     $output = '';
-//     $i = 0;
-//     foreach ($data as $item) {
-//         $i++;
-//         $output .= "$i . $item \n";
-//     }
-//     return $output;
-// }
-
-// function title($title) {
-//     $output = "\n---------------------------------------\n";
-//     $output .= "    $title  \n";
-//     $output .= "---------------------------------------\n";
-//     return $output;
-// }
-
-
-
