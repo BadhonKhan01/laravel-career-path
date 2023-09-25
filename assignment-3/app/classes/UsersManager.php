@@ -16,24 +16,44 @@ class UsersManager
 
     function register($newUser){
 
-        $users = $this->getUsers($newUser);
+        $checkUser = $this->isUserExists($newUser);
         
-        if(!$users) {
+        if(!$checkUser) {
             printf("Invalid user!\n");
             return;
         }
+
+        $user = new User();
+        $user->setName($newUser['name']);
+        $user->setEmail($newUser['email']);
+        $user->setPassword($newUser['password']);
+
+        $this->users[] = $user;
+        printf("User added successfully!\n");
         
-        $register = [];
-        $register[] = new NewRegister($newUser);
-        $this->storage->save(User::getModelName(), $register);
+        $this->saveUsers();
     }
 
-    function getUsers($newUser){
+    function isUserExists($newUser){
         foreach($this->users as $user){
             if(($user->getName() === $newUser['name']) && ($user->getEmail() === $newUser['email'])){
                 return null;
             }
         }
         return $newUser;
+    }
+
+    public function saveUsers(): void
+    {
+        $this->storage->save(User::getModelName(), $this->users);
+    }
+
+    public function login($newUser){
+        foreach($this->users as $user){
+            if(($user->getEmail() === $newUser['email']) && ($user->getPassword() === $newUser['password'])){
+                return true;
+            }
+        }
+        return false;
     }
 }

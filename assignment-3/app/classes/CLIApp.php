@@ -9,6 +9,7 @@ class CLIApp
     private UsersManager $usersManager;
     private const LOGIN = 1;
     private const REGISTER = 2;
+    private $authorized;
 
     private array $authentication =[
         self::LOGIN => 'Login',
@@ -16,35 +17,49 @@ class CLIApp
     ];
 
     function __construct(){
+        $this->authorized = FALSE;
         $this->usersManager = new UsersManager(new FileStorage());
     }
 
     function run(): void
     {
         while (true) {
-            foreach ($this->authentication as $option => $label) {
-                printf("%d. %s\n", $option, $label);
-            }
-            $choice = intval(readline("Enter your option: "));
 
-            switch ($choice) {
-                case self::LOGIN:
-                        echo "Login";
-                    break;
-                case self::REGISTER:
-                        $name = trim(readline("Enter your name: "));
-                        $email = trim(readline("Enter your email: "));
-                        $password = trim(readline("Enter your password: "));
-                        $newUser = [
-                            "name" => $name,
-                            "email" => $email,
-                            "password" => $password
-                        ];
-                        $this->usersManager->register($newUser);
-                    break;
-                default:
-                    echo "Invalid option.\n";
+            if (!$this->authorized) {
+
+                foreach ($this->authentication as $option => $label) {
+                    printf("%d. %s\n", $option, $label);
+                }
+                $choice = intval(readline("Enter your option: "));
+
+                switch ($choice) {
+                    case self::LOGIN:
+                            $email = trim(readline("Enter your email: "));
+                            $password = trim(readline("Enter your password: "));
+                            $newUser = [
+                                "email" => $email,
+                                "password" => $password
+                            ];
+                            $this->authorized = $this->usersManager->login($newUser);
+                        break;
+                    case self::REGISTER:
+                            $name = trim(readline("Enter your name: "));
+                            $email = trim(readline("Enter your email: "));
+                            $password = trim(readline("Enter your password: "));
+                            $newUser = [
+                                "name" => $name,
+                                "email" => $email,
+                                "password" => $password
+                            ];
+                            $this->usersManager->register($newUser);
+                        break;
+                    default:
+                        echo "Invalid option.\n";
+                }
+            }else{
+                echo "authorized";
             }
+
         }
     }
 }
