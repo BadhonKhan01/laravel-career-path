@@ -1,9 +1,9 @@
 <?php 
 namespace App\Trait;
 
-trait UserInputs
+trait UserTrait
 {
-    public function checkValidation($data){
+    public function userInputValidation($data){
         $errors = [];
         if(isset($data['name']) && empty($data['name'])){
             $errors[] = "Name is required!";

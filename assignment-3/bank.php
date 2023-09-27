@@ -1,39 +1,36 @@
 <?php 
 require 'vendor/autoload.php';
 
-use App\Auth\UserAuth;
 use App\Storage\FileStorage;
 use App\Enum\UserType;
+use App\Auth\Registration;
+use App\Auth\Login;
 
 class Bank
 {
     private const LOGIN = 1;
     private const REGISTER = 2;
-    private bool $authorization = FALSE;
-    private UserAuth $auth;
+
+    private Login $login;
+    private Registration $registration;
     
-
-
     function __construct(){
-        $this->auth = new UserAuth(new FileStorage());
+        $this->login = new Login(new FileStorage());
+        $this->registration = new Registration(new FileStorage());
     }
 
     public function run(): void {
         while(true){
-            if (!$this->authorization) {
-                printf("%d. %s\n", 1, 'Login');
-                printf("%d. %s\n", 2, 'Register');
-                $choice = intval(readline("Enter your option: "));
-                switch ($choice) {
-                    case self::LOGIN:
-                        # code...
-                        break;
-                    case self::REGISTER:
-                        $this->auth->register(UserType::USER_ACCOUNT);
-                        break;
-                }
-            }else{
-
+            printf("%d. %s\n", 1, 'Login');
+            printf("%d. %s\n", 2, 'Register');
+            $choice = intval(readline("Enter your option: "));
+            switch ($choice) {
+                case self::LOGIN:
+                        $this->login->run();
+                    break;
+                case self::REGISTER:
+                        $this->registration->run(UserType::USER_ACCOUNT);
+                    break;
             }
         }
     }
