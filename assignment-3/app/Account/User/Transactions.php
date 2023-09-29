@@ -72,15 +72,20 @@ class Transactions
 
     public function currentBalance(): void
     {
-        $depositData = $this->deposit->getDeposit[$this->user->getUserIndex()];
-        $withdrawData = $this->withdraw->withdrawData[$this->user->getUserIndex()];
-
-        foreach ($depositData as $deposit) {
-            $this->totalDeposit += $deposit->getAmount();
+        if(!empty($this->deposit->getDeposit[$this->user->getUserIndex()])){
+            $this->totalDeposit = 0;
+            $depositData = $this->deposit->getDeposit[$this->user->getUserIndex()];
+            foreach ($depositData as $deposit) {
+                $this->totalDeposit += $deposit->getAmount();
+            }
         }
 
-        foreach ($withdrawData as $withdraw) {
-            $this->totalWithdraw += $withdraw->getAmount();
+        if(!empty($this->withdraw->withdrawData[$this->user->getUserIndex()])){
+            $this->totalWithdraw = 0;
+            $withdrawData = $this->withdraw->withdrawData[$this->user->getUserIndex()];
+            foreach ($withdrawData as $withdraw) {
+                $this->totalWithdraw += $withdraw->getAmount();
+            }
         }
 
         $result = ($this->totalDeposit - $this->totalWithdraw);

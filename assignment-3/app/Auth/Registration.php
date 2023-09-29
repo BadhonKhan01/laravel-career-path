@@ -47,6 +47,7 @@ class Registration
         if(!empty($this->getUsers)){
             foreach ($this->getUsers as $user) {
                 if($user->getEmail() == $this->email){
+                    printf("\n");
                     printf("This email already used\n");
                     return FALSE;
                 }
@@ -68,6 +69,7 @@ class Registration
     protected function saveAccount(): void
     {
         $this->storage->save(User::getModelName(), $this->getUsers);
+        printf("\n");
         printf("Account created successfully\n");
         return;
     }

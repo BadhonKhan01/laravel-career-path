@@ -59,7 +59,7 @@ class TransferMoney
 
     protected function transferForm($amount){
         $diposit = new Diposit();
-        $diposit->setStatus('deposit to '.$this->user->getName());
+        $diposit->setStatus("transfer (" . $this->userData->getName() ." <- " . $this->user->getName() .")");
         $diposit->setAmount($amount);
         $diposit->setTime(date('Y-m-d H:i:s'));
         $this->deposit->getDeposit[$this->userData->getUserIndex()][] = $diposit;
@@ -68,7 +68,7 @@ class TransferMoney
 
     protected function transferBy($amount){
         $withdraw = new Withdraw();
-        $withdraw->setStatus("transfer to ".$this->userData->getName());
+        $withdraw->setStatus("transfer (" . $this->user->getName() ." -> " . $this->userData->getName() .")");
         $withdraw->setAmount($amount);
         $withdraw->setTime(date('Y-m-d H:i:s'));
         $this->withdraw->withdrawData[$this->user->getUserIndex()][] = $withdraw;

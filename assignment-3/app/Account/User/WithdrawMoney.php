@@ -57,7 +57,6 @@ class WithdrawMoney
         $depositAmount = 0;
         $withdrawAmount = 0;
 
-
         if (!empty($this->dipositData[$this->user->getUserIndex()])) {
             foreach ($this->dipositData[$this->user->getUserIndex()] as $deposit) {
                 $depositAmount += $deposit->getAmount();

@@ -5,6 +5,7 @@ use App\Auth\User;
 use App\Interface\Storage;
 use App\Enum\UserType;
 use App\Account\User\UserAccount;
+use App\Account\Admin\AdminAccount;
 
 class Login
 {
@@ -18,7 +19,6 @@ class Login
     function __construct(Storage $storage){
         $this->storage = $storage;
         $this->getUsers = $this->storage->load( User::getModelName() );
-        // var_dump($this->getUsers);
     }
     
     public function run(){
@@ -34,6 +34,11 @@ class Login
 
         if($this->type === UserType::USER_ACCOUNT){
             $account = new UserAccount($this->data);
+            $account->run();
+        }
+
+        if($this->type === UserType::ADMIN_ACCOUNT){
+            $account = new AdminAccount($this->data, $this->getUsers);
             $account->run();
         }
     }

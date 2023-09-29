@@ -5,8 +5,6 @@ use App\Interface\Storage;
 
 class FileStorage implements Storage
 {
-    private $data;
-
     public function save(string $model, array $data): void
     {
         file_put_contents($this->getModelPath($model), serialize($data));
