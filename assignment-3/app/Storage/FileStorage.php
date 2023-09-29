@@ -14,16 +14,16 @@ class FileStorage implements Storage
 
     public function load(string $model): array 
     {
-        $this->data = [];
+        $data = [];
         if (file_exists($this->getModelPath($model))) {
-            $this->data = unserialize(file_get_contents($this->getModelPath($model)));
+            $data = unserialize(file_get_contents($this->getModelPath($model))) ?? [];
         }
 
-        if (!is_array($this->data) && !empty($this->data)) {
+        if (!is_array($data)) {
             return [];
         }
 
-        return $this->data;
+        return $data;
     }
 
     public function getModelPath(string $model): string

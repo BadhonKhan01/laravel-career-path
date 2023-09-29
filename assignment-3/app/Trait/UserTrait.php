@@ -18,9 +18,11 @@ trait UserTrait
         }
 
         if (!empty($errors)) {
+            printf("\n");
             foreach ($errors as $item) {
                 printf("$item\n");
             }
+            printf("\n");
             unset($errors);
             return FALSE;
         }else{

@@ -5,14 +5,24 @@ use App\Storage\FileStorage;
 use App\Enum\UserType;
 use App\Auth\Registration;
 use App\Auth\Login;
+use App\Trait\MenuTrait;
 
 class Bank
 {
+    use MenuTrait;
+
     private const LOGIN = 1;
     private const REGISTER = 2;
 
+    private array $option = [
+        self::LOGIN => 'Login',
+        self::REGISTER => 'Register'
+    ];
+
     private Login $login;
     private Registration $registration;
+
+
     
     function __construct(){
         $this->login = new Login(new FileStorage());
@@ -21,9 +31,9 @@ class Bank
 
     public function run(): void {
         while(true){
-            printf("%d. %s\n", 1, 'Login');
-            printf("%d. %s\n", 2, 'Register');
+            $this->loadMenus($this->option);
             $choice = intval(readline("Enter your option: "));
+            printf("\n");
             switch ($choice) {
                 case self::LOGIN:
                         $this->login->run();

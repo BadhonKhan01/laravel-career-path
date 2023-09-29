@@ -10,6 +10,7 @@ class User implements Model
     private $email;
     private $password;
     protected UserType $type;
+    protected string $userIndex;
 
     public static function getModelName(): string
     {
@@ -36,6 +37,12 @@ class User implements Model
         $this->type = $type;
     }
 
+    public function setUserIndex(string $userIndex): void
+    {
+        $this->userIndex = $userIndex;
+    }
+
+
     public function getName(): string 
     {
         return $this->name;
@@ -54,6 +61,11 @@ class User implements Model
     public function getType(): UserType 
     {
         return $this->type;
+    }
+
+    public function getUserIndex(): string
+    {
+        return $this->userIndex;
     }
 
     
