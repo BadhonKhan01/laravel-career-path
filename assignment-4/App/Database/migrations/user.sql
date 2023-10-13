@@ -1,0 +1,10 @@
+DROP TABLE IF EXISTS `users`;
+CREATE TABLE users (
+    `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    account_type ENUM('USER_ACCOUNT', 'ADMIN_ACCOUNT') NOT NULL,
+    created_at TIMESTAMP,
+    PRIMARY KEY (`id`)
+);

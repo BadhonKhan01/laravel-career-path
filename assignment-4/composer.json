@@ -1,0 +1,14 @@
+{
+    "name": "badhon/assignment-4",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "App\\": "App/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Sanjil Khan Badhon"
+        }
+    ]
+}
