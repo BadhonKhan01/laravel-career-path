@@ -3,7 +3,7 @@ namespace App\Repository;
 
 use App\Interfaces\Repository;
 
-class DepositFileRepository implements Repository
+class TransactionFileRepository implements Repository
 {
     public function getModelPath(string $modal){
         return 'app/data/' . $modal . ".txt";

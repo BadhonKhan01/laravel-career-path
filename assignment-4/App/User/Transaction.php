@@ -22,14 +22,7 @@ abstract class Transaction
         $this->service = new TransactionService($this->apptype);
     }
 
-    public function cliInputs(){
-        $this->amount = (float)trim(readline("Enter deposit amount: "));
-        if($this->amount < 0){
-            $this->error($this->apptype, "Sorry! your amount not valid.");
-            return FALSE;
-        }
-        return TRUE;
-    }
+    abstract public function cliInputs();
 
     abstract public function run();
 }

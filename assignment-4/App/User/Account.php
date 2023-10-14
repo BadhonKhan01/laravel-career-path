@@ -6,6 +6,8 @@ use App\Interfaces\AppRun;
 use App\Modeles\UserModel;
 use App\User\DepositMoney;
 use App\Traits\DisplayMenu;
+use App\DTO\TransactionType;
+use App\Modeles\DepositModel;
 
 class Account implements AppRun
 {
@@ -42,6 +44,7 @@ class Account implements AppRun
                     
                 break;
             case self::DEPOSIT_MONEY:
+                    TransactionType::setModel(new DepositModel());
                     $deposit = new DepositMoney($this->apptype, $this->user);
                     $deposit->run();
                 break;

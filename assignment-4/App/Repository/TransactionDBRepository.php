@@ -4,7 +4,7 @@ namespace App\Repository;
 use App\Database\DB;
 use App\Interfaces\Repository;
 
-class DepositDBRepository implements Repository
+class TransactionDBRepository implements Repository
 {
     public DB $db;
 

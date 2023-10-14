@@ -2,35 +2,40 @@
 namespace App\Services;
 
 use App\Enums\AppType;
-use App\Modeles\DepositModel;
+use App\Interfaces\Model;
+use App\DTO\TransactionType;
 use App\Interfaces\Repository;
-use App\Repository\DepositDBRepository;
-use App\Repository\DepositFileRepository;
+use App\Repository\TransactionDBRepository;
+use App\Repository\TransactionFileRepository;
 
 class TransactionService
 {
-    public array $deposit;
-    public Repository $depositRepository;
+    public array $storage;
+    public Repository $repository;
+    public Model $model;
 
     function __construct(AppType $apptype){
+
+        $this->model = TransactionType::getModel();
+
         if ($apptype == AppType::CLI_APP) {
-            $this->depositRepository = new DepositFileRepository();
+            $this->repository = new TransactionFileRepository();
+            $this->storage = $this->repository->get($this->model::getModelName());
         }else{
-            $this->depositRepository = new DepositDBRepository();
+            $this->repository = new TransactionDBRepository();
         }
     }
 
     public function insertForFile(array $data){
-        $diposit = new DepositModel();
-        $diposit->setId($data['id']);
-        $diposit->setUserId($data['user_id']);
-        $diposit->setStatus($data['status']);
-        $diposit->setAmount($data['amount']);
-        $this->deposit[] = $diposit;
-        $this->depositRepository->insert(DepositModel::getModelName(), $this->deposit);
+        $this->model->setId($data['id']);
+        $this->model->setUserId($data['user_id']);
+        $this->model->setStatus($data['status']);
+        $this->model->setAmount($data['amount']);
+        $this->storage[] = $this->model;
+        $this->repository->insert($this->model::getModelName(), $this->storage);
     }
 
     public function insertForDB(array $data){
-        $this->depositRepository->insert(DepositModel::getModelName(), $data);
+        $this->repository->insert($this->model::getModelName(), $data);
     }
 }
