@@ -5,7 +5,7 @@ use App\Enums\AppType;
 use App\User\Transaction;
 use App\Modeles\DepositModel;
 
-class DepositMoney extends Transaction
+class Deposit extends Transaction
 {
     public function cliInputs(){
         $msg = "Enter deposit amount: ";
@@ -16,7 +16,7 @@ class DepositMoney extends Transaction
         }
         return TRUE;
     }
-    
+
     public function run(): void
     {
         if(($this->apptype == AppType::CLI_APP) && $this->cliInputs()){
@@ -24,7 +24,8 @@ class DepositMoney extends Transaction
                 'id' => time(),
                 'user_id' => $this->user->getId(),
                 'status' => DepositModel::getModelName(),
-                'amount' => $this->amount
+                'amount' => $this->amount,
+                'created_at' => date('Y-m-d h:i:s')
             ]);
         }else{
             if($this->cliInputs()){

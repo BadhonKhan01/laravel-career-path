@@ -1,8 +1,6 @@
 <?php
 namespace App\Interfaces;
 
-use App\Interfaces\Model;
-
 interface Repository
 {
     public function insert(string $model, array $data);

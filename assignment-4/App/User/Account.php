@@ -1,13 +1,16 @@
 <?php 
 namespace App\User;
 
+use App\User\Deposit;
 use App\Enums\AppType;
+use App\User\Withdraw;
 use App\Interfaces\AppRun;
 use App\Modeles\UserModel;
-use App\User\DepositMoney;
 use App\Traits\DisplayMenu;
 use App\DTO\TransactionType;
 use App\Modeles\DepositModel;
+use App\Modeles\WithdrawModel;
+use App\User\ShowTransactions;
 
 class Account implements AppRun
 {
@@ -41,15 +44,18 @@ class Account implements AppRun
         $choice = intval(readline("Enter your option: "));
         switch ($choice) {
             case self::SHOW_TRANSACTION:
-                    
+                    $showTransaction = new ShowTransactions();
+                    $showTransaction->run();
                 break;
             case self::DEPOSIT_MONEY:
                     TransactionType::setModel(new DepositModel());
-                    $deposit = new DepositMoney($this->apptype, $this->user);
+                    $deposit = new Deposit($this->apptype, $this->user);
                     $deposit->run();
                 break;
             case self::WITHDRAW_MONEY:
-                    
+                    TransactionType::setModel(new WithdrawModel());
+                    $withdraw = new Withdraw($this->apptype, $this->user);
+                    $withdraw->run();
                 break;
             case self::SHOW_CURRENT_BALANCE:
                     

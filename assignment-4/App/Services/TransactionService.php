@@ -31,6 +31,7 @@ class TransactionService
         $this->model->setUserId($data['user_id']);
         $this->model->setStatus($data['status']);
         $this->model->setAmount($data['amount']);
+        $this->model->setCreatedAt($data['created_at']);
         $this->storage[] = $this->model;
         $this->repository->insert($this->model::getModelName(), $this->storage);
     }

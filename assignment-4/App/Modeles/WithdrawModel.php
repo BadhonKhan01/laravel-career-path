@@ -4,7 +4,7 @@ namespace App\Modeles;
 
 use App\Interfaces\Model;
 
-class DepositModel implements Model
+class WithdrawModel implements Model
 {
     private int $id;
     private int $userId;
@@ -14,7 +14,7 @@ class DepositModel implements Model
 
     public static function getModelName(): string
     {
-        return 'deposits';
+        return 'withdraw';
     }
 
     public function getId(): int

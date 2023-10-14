@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS `deposits`;
-CREATE TABLE deposits (
+DROP TABLE IF EXISTS `withdraw`;
+CREATE TABLE withdraw (
     `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
     user_id bigint(20) UNSIGNED,
     status VARCHAR(255),
