@@ -32,6 +32,9 @@ class TransactionService
         $this->model->setStatus($data['status']);
         $this->model->setAmount($data['amount']);
         $this->model->setCreatedAt($data['created_at']);
+        if(isset($data['setTransferBy']) && !empty($data['setTransferBy'])){
+            $this->model->setTransferBy($data['setTransferBy']);
+        }
         $this->storage[] = $this->model;
         $this->repository->insert($this->model::getModelName(), $this->storage);
     }

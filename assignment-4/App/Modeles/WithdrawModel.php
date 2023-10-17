@@ -11,6 +11,7 @@ class WithdrawModel implements Model
     protected string $createdAt;
     protected string $amount;
     protected string $status;
+    protected string $transferBy;
 
     public static function getModelName(): string
     {
@@ -65,5 +66,15 @@ class WithdrawModel implements Model
     public function getStatus(): string
     {
         return $this->status;
+    }
+
+    public function setTransferBy(string $transferBy): void
+    {
+        $this->transferBy = $transferBy;
+    }
+
+    public function getTransferBy(): string
+    {
+        return $this->transferBy;
     }
 }

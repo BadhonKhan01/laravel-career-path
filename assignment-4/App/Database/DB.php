@@ -46,8 +46,7 @@ class DB
 
     public function insertTable($sql){
         try {
-            self::$conn->exec($sql);
-            echo "Insert\n";
+            return self::$conn->exec($sql);
         } catch (PDOException $e) {
             echo $e->getMessage();
         }

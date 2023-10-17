@@ -43,7 +43,7 @@ class Login extends Authentication implements AppRun
     protected function matchUser(){
         if(!empty($this->userService->users)){
             foreach ($this->userService->users as $user) {
-                if($user->getEmail() == $this->email && $user->getPassword() == $this->password){
+                if(($user->getEmail() == $this->email) && ($user->getPassword() == $this->password)){
                     $this->user = $user;
                     return TRUE;
                 }

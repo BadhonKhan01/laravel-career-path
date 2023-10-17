@@ -28,13 +28,13 @@ class CLIApp implements AppRun
             printf("\n");
             switch ($choice) {
                 case self::LOGIN:
-                        $this->login = new Login(AppType::CLI_APP, UserType::USER_ACCOUNT);
-                        // $this->login = new Login(AppType::WEB_APP, UserType::USER_ACCOUNT);
+                        // $this->login = new Login(AppType::CLI_APP, UserType::USER_ACCOUNT);
+                        $this->login = new Login(AppType::WEB_APP, UserType::USER_ACCOUNT);
                         $this->login->run();
                     break;
                 case self::REGISTER:
-                        $this->registration = new Registration(AppType::CLI_APP, UserType::USER_ACCOUNT);
-                        // $this->registration = new Registration(AppType::WEB_APP, UserType::USER_ACCOUNT);
+                        // $this->registration = new Registration(AppType::CLI_APP, UserType::USER_ACCOUNT);
+                        $this->registration = new Registration(AppType::WEB_APP, UserType::USER_ACCOUNT);
                         $this->registration->run();
                     break;
             }

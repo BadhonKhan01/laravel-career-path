@@ -24,30 +24,36 @@ class TransactionDBRepository implements Repository
         $user_id = $data['user_id'];
         $status = $data['status'];
         $amount = $data['amount'];
+        $amount = $data['amount'];
+        $setTransferBy = $data['setTransferBy'];
 
-        $sql = "INSERT INTO $model (id, user_id, status, amount, created_at) VALUES (NULL, '$user_id', '$status', '$amount', NOW())";
-        $this->db->insertTable($sql);
+        $sql = "INSERT INTO $model (id, user_id, status, amount, setTransferBy, created_at) VALUES (NULL, '$user_id', '$status', '$amount','$setTransferBy', NOW())";
+        if($this->db->insertTable($sql)){
+            printf("%s\n", ucfirst($model)." saved");
+        }
         
     }
 
     public function get($model){
         $this->db->createConnection();
 
-        $sql = "SELECT *  FROM `$model`";
-        $deposit = $this->db->getTable($sql);
-        var_dump($deposit);
+        $modelName = $model::getModelName();
+        $sql = "SELECT *  FROM `$modelName`";
+        $dbData = $this->db->getTable($sql);
+        $getDBArray = [];
 
-        $userModels = [];
-        // foreach ($users as $user) {
-        //     $userModel = new UserModel();
-        //     $userModel->setId($user["user_id"]);
-        //     $userModel->setName($user["name"]);
-        //     $userModel->setEmail($user["email"]);
-        //     $userModel->setPassword($user["password"]);
-        //     $userModel->setAccountType($user["account_type"]);
-        //     $userModels[] = $userModel;
-        // }
-        return $userModels;
+        foreach ($dbData as $data) {
+            $newModel = new $model();
+            $newModel->setId($data["id"]);
+            $newModel->setUserId($data["user_id"]);
+            $newModel->setAmount($data["amount"]);
+            $newModel->setTransferBy($data["setTransferBy"]);
+            $newModel->setStatus($data["status"]);
+            $newModel->setCreatedAt($data["created_at"]);
+            $getDBArray[] = $newModel;
+        }
+        
+        return $getDBArray;
     }
 
 }

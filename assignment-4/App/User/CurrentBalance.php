@@ -2,28 +2,23 @@
 namespace App\User;
 
 use App\Enums\AppType;
-use App\Modeles\UserModel;
-use App\Traits\ErrorTrait;
 use App\Modeles\DepositModel;
 use App\Interfaces\Repository;
 use App\Modeles\WithdrawModel;
 use App\Repository\TransactionDBRepository;
 use App\Repository\TransactionFileRepository;
 
-class ShowTransactions
+class CurrentBalance
 {
-    use ErrorTrait;
     public array $deposit;
     public array $withdraw;
     public Repository $depositRepository;
     public Repository $withdrawRepository;
     public AppType $apptype;
-    public UserModel $targetUser;
     
 
-    function __construct(AppType $apptype, UserModel $user)
+    function __construct(AppType $apptype)
     {
-        $this->targetUser = $user;
         $this->apptype = $apptype;
         if($this->apptype == AppType::CLI_APP){
             $this->loadFileData();
@@ -50,24 +45,21 @@ class ShowTransactions
     
     public function run(): void
     {
-        if(!$this->deposit && !$this->withdraw ){
-            $this->error($this->apptype, 'Sorry. No transaction found.');
-            return;
-        }
 
-        $result = array_merge($this->deposit, $this->withdraw);
-        usort($result, function($a, $b) {
-            return strtotime($a->getCreatedAt()) - strtotime($b->getCreatedAt());
-        });
         printf("\n");
-        foreach($result as $item){
-            if($this->targetUser->getId() == $item->getUserId()){
-                $status = $item->getStatus();
-                if($item->getTransferBy() != "NULL"){
-                    $status = $item->getStatus() .' transfer '. $item->getTransferBy();
-                }
-                printf("%s - %s - %s\n", $item->getCreatedAt(), $item->getAmount(), $status);
+        printf("%s %s\n", "Current Balance: ", number_format($this->calculate(), 2));
+    }
+
+    public function calculate(){
+        $result = array_merge($this->deposit, $this->withdraw);
+        $currentBalance = 0;
+        foreach ($result as $item) {
+            if ($item instanceof DepositModel) {
+                $currentBalance += floatval($item->getAmount());
+            } elseif ($item instanceof WithdrawModel) {
+                $currentBalance -= floatval($item->getAmount());
             }
         }
+        return $currentBalance;
     }
 }

@@ -3,6 +3,7 @@ namespace App\User;
 
 use App\User\Deposit;
 use App\Enums\AppType;
+use App\User\Transfer;
 use App\User\Withdraw;
 use App\Interfaces\AppRun;
 use App\Modeles\UserModel;
@@ -44,7 +45,7 @@ class Account implements AppRun
         $choice = intval(readline("Enter your option: "));
         switch ($choice) {
             case self::SHOW_TRANSACTION:
-                    $showTransaction = new ShowTransactions();
+                    $showTransaction = new ShowTransactions($this->apptype, $this->user);
                     $showTransaction->run();
                 break;
             case self::DEPOSIT_MONEY:
@@ -58,10 +59,12 @@ class Account implements AppRun
                     $withdraw->run();
                 break;
             case self::SHOW_CURRENT_BALANCE:
-                    
+                    $currentBalance = new CurrentBalance($this->apptype);
+                    $currentBalance->run();
                 break;
             case self::TRANSFER_MONEY:
-                    
+                    $transfer = new Transfer($this->apptype, $this->user);
+                    $transfer->run();
                 break;
             case self::LOG_OUT:
                     return;

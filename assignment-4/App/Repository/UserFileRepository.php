@@ -11,7 +11,10 @@ class UserFileRepository implements Repository
     }
 
     public function insert(string $model, array $data){
-        file_put_contents($this->getModelPath($model), serialize($data));
+        if(file_put_contents($this->getModelPath($model), serialize($data))){
+            printf("\n");
+            printf("%s\n", ucfirst($model)." created");
+        }
     }
 
     public function update(Model $model, array $data)    {
