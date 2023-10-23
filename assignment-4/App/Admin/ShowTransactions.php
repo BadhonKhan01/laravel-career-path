@@ -1,5 +1,5 @@
 <?php 
-namespace App\User;
+namespace App\Admin;
 
 use App\Enums\AppType;
 use App\Modeles\UserModel;
@@ -23,11 +23,12 @@ class ShowTransactions
     public $userService;
     
 
-    function __construct(AppType $apptype, UserModel $user)
+    function __construct(AppType $apptype)
     {
-        $this->targetUser = $user;
         $this->apptype = $apptype;
+
         $this->userService = new UserService($this->apptype);
+
         if($this->apptype == AppType::CLI_APP){
             $this->loadFileData();
         }else{
@@ -51,7 +52,7 @@ class ShowTransactions
         $this->withdraw = $this->withdrawRepository->get( new WithdrawModel() );
     }
     
-    public function run()
+    public function run(): void
     {
         if(!$this->deposit && !$this->withdraw ){
             $this->error($this->apptype, 'Sorry. No transaction found.');
@@ -63,41 +64,21 @@ class ShowTransactions
             return strtotime($a->getCreatedAt()) - strtotime($b->getCreatedAt());
         });
         printf("\n");
+        foreach($result as $item){
+            $status = $item->getStatus();
 
-        if($this->apptype == AppType::CLI_APP || (php_sapi_name() === 'cli' && $this->apptype == AppType::WEB_APP)){
-            foreach($result as $item){
-                if($this->targetUser->getId() == $item->getUserId()){
-                    $status = $item->getStatus();
-                    $symbol = " < ";
-                    if($item instanceof WithdrawModel){
-                        $symbol = " > ";
-                    }
-                    if($item->getTransferBy() != "NULL"){
-                        $status = $item->getStatus() .$symbol. $item->getTransferBy();
-                    }
-                    printf("%s - %s - %s\n", $item->getCreatedAt(), $item->getAmount(), $status);
+            $getUser = $this->getUser($item->getUserId());
+
+            if($item->getTransferBy() != "NULL"){
+                $symbol = " < ";
+                if($item instanceof WithdrawModel){
+                    $symbol = " > ";
                 }
+
+                $status = $item->getStatus() .$symbol. $item->getTransferBy();
             }
-        }else{
-            $temp = [];
-            foreach($result as $item){
-                if($this->targetUser->getId() == $item->getUserId()){
-                    $getUser = $this->getUser($item->getUserId());
-                    $temp[] = [
-                        'id' => $item->getId(),
-                        'userName' => $getUser->getName(),
-                        'userEmail' => $getUser->getEmail(),
-                        'userId' => $item->getUserid(),
-                        'amount' => $item->getAmount(),
-                        'status' => $item->getStatus(),
-                        'transferBy' => $item->getTransferBy(),
-                        'createdAt' => $item->getCreatedAt(),
-                    ];
-                }
-            }
-            return $temp;
+            printf("%s - %s - %s\n", $getUser->getName(), $item->getAmount(), $status);
         }
-
     }
 
     public function getUser($id){

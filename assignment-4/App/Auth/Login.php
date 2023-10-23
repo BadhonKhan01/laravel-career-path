@@ -1,13 +1,15 @@
 <?php 
 namespace App\Auth;
 
-use App\Traits\ErrorTrait;
 use App\User\Account;
+use App\DTO\WebStatus;
 use App\Enums\AppType;
 use App\Enums\UserType;
 use App\Interfaces\AppRun;
-use App\Auth\Authentication;
 use App\Modeles\UserModel;
+use App\Traits\ErrorTrait;
+use App\Admin\AdminAccount;
+use App\Auth\Authentication;
 use App\Services\UserService;
 
 class Login extends Authentication implements AppRun
@@ -23,18 +25,50 @@ class Login extends Authentication implements AppRun
     }
 
     public function cliInputs(){
-        $this->email = trim(readline("Enter your email: "));
-        $this->password = trim(readline("Enter your password: "));
+
+        if(isset($_POST) && !empty($_POST)){
+            $this->email = $_POST['email'];
+            $this->password = $_POST['password'];
+        }else{
+            $this->email = trim(readline("Enter your email: "));
+            $this->password = trim(readline("Enter your password: "));
+        }
     }
 
     public function run(): void
     {
-        if ($this->validate($this->cliInputs())) {
-            if(!$this->matchUser()){
-                $this->error($this->apptype, "Sorry! your email & password not correct.");
+        if (!$this->validate($this->cliInputs())) {
+
+            if($this->apptype == AppType::WEB_APP){
+                WebStatus::setError(true);
+                return;
+            }else{
+                $this->error($this->apptype, "Sorry! your email & password not valid.");
                 return;
             }
+        }
 
+        if(!$this->matchUser()){
+            if($this->apptype == AppType::WEB_APP){
+                WebStatus::setError(true);
+                WebStatus::setStatusMessage("Sorry! your email & password not match.");
+            }else{
+                $this->error($this->apptype, "Sorry! your email & password not match.");
+            }
+            return;
+        }
+
+        if($this->accountType == UserType::ADMIN_ACCOUNT){
+            $type = 'ADMIN_ACCOUNT';
+            if($this->apptype == AppType::CLI_APP){
+                $type = $this->user->getAccountType();
+            }
+
+            if($type == $this->user->getAccountType()){
+                $adminAccount = new AdminAccount($this->apptype, $this->user);
+                $adminAccount->run();
+            }
+        }else{
             $account = new Account($this->apptype, $this->user);
             $account->run();
         }

@@ -1,6 +1,7 @@
 <?php 
 namespace App\User;
 
+use App\DTO\WebStatus;
 use App\Enums\AppType;
 use App\User\Transaction;
 use App\Modeles\UserModel;
@@ -28,16 +29,21 @@ class Transfer
     }
 
     public function cliInputs(){
-        printf("\n");
-        $this->email = trim(readline("Enter transfer email: "));
-        $this->amount = (float)trim(readline("Enter deposit amount: "));
-        if($this->amount < 0){
-            $this->error($this->apptype, "Sorry! your amount not valid.");
+        if($this->apptype == AppType::CLI_APP || (php_sapi_name() === 'cli' && $this->apptype == AppType::WEB_APP)){
             printf("\n");
-            return FALSE;
+            $this->email = trim(readline("Enter transfer email: "));
+            $this->amount = (float)trim(readline("Enter deposit amount: "));
+            if($this->amount < 0){
+                $this->error($this->apptype, "Sorry! your amount not valid.");
+                printf("\n");
+                return FALSE;
+            }
+            printf("\n");
+            return TRUE;
+        }else{
+            $this->email = $_POST['email'];
+            $this->amount = $_POST['amount'];
         }
-        printf("\n");
-        return TRUE;
     }
 
     public function findUser(): void
@@ -58,10 +64,17 @@ class Transfer
     {
         $this->cliInputs();
         $this->findUser();
+        if($this->apptype == AppType::CLI_APP || (php_sapi_name() === 'cli' && $this->apptype == AppType::WEB_APP)){
+            if(!$this->dipositHolder){
+                printf("Sorry! users not available\n");
+                return;   
+            }
+        }
 
-        if(!$this->dipositHolder){
-            printf("Sorry! users not available\n");
-            return;   
+        if(!php_sapi_name() === 'cli' && $this->apptype == AppType::WEB_APP){
+            WebStatus::setError(true);
+            WebStatus::setStatusMessage("Sorry! users not available");
+            return;
         }
 
         if(($this->apptype == AppType::CLI_APP)){

@@ -1,11 +1,15 @@
 <?php 
 namespace App\Auth;
 
+use App\DTO\WebStatus;
 use App\Enums\AppType;
 use App\Enums\UserType;
+use App\Traits\ErrorTrait;
 
 abstract class Authentication
 {
+
+    use ErrorTrait;
     public AppType $apptype;
     public UserType $accountType;
     public $userService;
@@ -33,11 +37,19 @@ abstract class Authentication
 
         if (!empty($errors)) {
             printf("\n");
+            $temp = [];
             foreach ($errors as $item) {
                 printf("$item\n");
+                $temp[] = "<p>".$item . "</p>";
             }
             printf("\n");
             unset($errors);
+
+            if($this->apptype == AppType::WEB_APP){
+                WebStatus::getError(true);
+                WebStatus::setStatusMessage(implode(" ", $temp));
+            }
+
             return FALSE;
         }else{
             return TRUE;
@@ -48,8 +60,12 @@ abstract class Authentication
         if(!empty($this->userService->users)){
             foreach ($this->userService->users as $user) {
                 if($user->getEmail() == $this->email){
-                    printf("\n");
-                    printf("This email already used\n");
+                    if($this->apptype == AppType::WEB_APP){
+                        WebStatus::setStatus(true);
+                        WebStatus::setStatusMessage('This email already used');
+                    }else{
+                        $this->error($this->apptype, "This email already used.");
+                    }
                     return FALSE;
                 }
             }

@@ -2,6 +2,7 @@
 namespace App\Repository;
 
 use App\Database\DB;
+use App\DTO\WebStatus;
 use App\Interfaces\Repository;
 
 class TransactionDBRepository implements Repository
@@ -29,7 +30,13 @@ class TransactionDBRepository implements Repository
 
         $sql = "INSERT INTO $model (id, user_id, status, amount, setTransferBy, created_at) VALUES (NULL, '$user_id', '$status', '$amount','$setTransferBy', NOW())";
         if($this->db->insertTable($sql)){
-            printf("%s\n", ucfirst($model)." saved");
+            if(!empty($setTransferBy) && $setTransferBy != 'NULL'){
+                WebStatus::setStatus(true);
+                WebStatus::setStatusMessage("Transfer successfully");
+            }else{
+                WebStatus::setStatus(true);
+                WebStatus::setStatusMessage(ucfirst($model) . " successfully");
+            }
         }
         
     }

@@ -1,10 +1,8 @@
 <?php 
 require 'vendor/autoload.php';
 
-use App\Web\Web;
-use App\CLI\CLIApp;
+use App\CLI\CLIAdminApp;
 use App\Interfaces\AppRun;
-use App\Router\Router;
 
 class BankApp implements AppRun
 {
@@ -12,11 +10,10 @@ class BankApp implements AppRun
     {
         // Check Request Type
         if (php_sapi_name() === 'cli') {
-            $CLI = new CLIApp();
+            $CLI = new CLIAdminApp();
             $CLI->run();
         } else {
-            session_start();
-            Router::dispatch();
+            echo "Run web";
         }
     }
 }

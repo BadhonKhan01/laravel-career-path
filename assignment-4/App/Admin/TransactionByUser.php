@@ -1,9 +1,14 @@
 <?php 
-namespace App\User;
+namespace App\Admin;
 
+use App\User\Account;
 use App\Enums\AppType;
+use App\Enums\UserType;
+use App\Interfaces\AppRun;
 use App\Modeles\UserModel;
 use App\Traits\ErrorTrait;
+use App\Admin\AdminAccount;
+use App\Auth\Authentication;
 use App\Modeles\DepositModel;
 use App\Services\UserService;
 use App\Interfaces\Repository;
@@ -11,23 +16,24 @@ use App\Modeles\WithdrawModel;
 use App\Repository\TransactionDBRepository;
 use App\Repository\TransactionFileRepository;
 
-class ShowTransactions
+class TransactionByUser implements AppRun
 {
     use ErrorTrait;
+    private AppType $apptype;
+    public mixed $userService;
     public array $deposit;
     public array $withdraw;
+    public string $email;
+    public float $amount;
     public Repository $depositRepository;
     public Repository $withdrawRepository;
-    public AppType $apptype;
-    public UserModel $targetUser;
-    public $userService;
-    
+    public $user;
 
-    function __construct(AppType $apptype, UserModel $user)
+    function __construct(AppType $apptype)
     {
-        $this->targetUser = $user;
         $this->apptype = $apptype;
         $this->userService = new UserService($this->apptype);
+
         if($this->apptype == AppType::CLI_APP){
             $this->loadFileData();
         }else{
@@ -50,11 +56,34 @@ class ShowTransactions
         $this->withdrawRepository = new TransactionDBRepository();
         $this->withdraw = $this->withdrawRepository->get( new WithdrawModel() );
     }
-    
-    public function run()
+
+    public function cliInputs(){
+        printf("\n");
+        $this->email = trim(readline("Enter transfer email: "));
+        printf("\n");
+    }
+
+    public function findUser(): void
     {
-        if(!$this->deposit && !$this->withdraw ){
-            $this->error($this->apptype, 'Sorry. No transaction found.');
+        if(empty($this->userService)){
+            $this->error($this->apptype, "Sorry! users not available");
+            return;   
+        }
+
+        foreach ($this->userService->users as $user) {
+            if($user->getEmail() == $this->email){
+                $this->user = $user;
+            }
+        }
+    }
+
+    public function run(): void
+    {
+        $this->cliInputs();
+        $this->findUser();
+
+        if(!$this->deposit && !$this->withdraw || empty($this->user) ){
+            $this->error($this->apptype, 'Sorry. No transaction user found.');
             return;
         }
 
@@ -63,41 +92,22 @@ class ShowTransactions
             return strtotime($a->getCreatedAt()) - strtotime($b->getCreatedAt());
         });
         printf("\n");
+        foreach($result as $item){
+            if($this->user->getId() == $item->getUserId()){
+                $status = $item->getStatus();
+                $getUser = $this->getUser($item->getUserId());
 
-        if($this->apptype == AppType::CLI_APP || (php_sapi_name() === 'cli' && $this->apptype == AppType::WEB_APP)){
-            foreach($result as $item){
-                if($this->targetUser->getId() == $item->getUserId()){
-                    $status = $item->getStatus();
+                if($item->getTransferBy() != "NULL"){
                     $symbol = " < ";
                     if($item instanceof WithdrawModel){
                         $symbol = " > ";
                     }
-                    if($item->getTransferBy() != "NULL"){
-                        $status = $item->getStatus() .$symbol. $item->getTransferBy();
-                    }
-                    printf("%s - %s - %s\n", $item->getCreatedAt(), $item->getAmount(), $status);
+    
+                    $status = $item->getStatus() .$symbol. $item->getTransferBy();
                 }
+                printf("%s - %s - %s - %s\n", $getUser->getName(), $item->getAmount(), $status, $item->getCreatedAt());
             }
-        }else{
-            $temp = [];
-            foreach($result as $item){
-                if($this->targetUser->getId() == $item->getUserId()){
-                    $getUser = $this->getUser($item->getUserId());
-                    $temp[] = [
-                        'id' => $item->getId(),
-                        'userName' => $getUser->getName(),
-                        'userEmail' => $getUser->getEmail(),
-                        'userId' => $item->getUserid(),
-                        'amount' => $item->getAmount(),
-                        'status' => $item->getStatus(),
-                        'transferBy' => $item->getTransferBy(),
-                        'createdAt' => $item->getCreatedAt(),
-                    ];
-                }
-            }
-            return $temp;
         }
-
     }
 
     public function getUser($id){
@@ -107,4 +117,5 @@ class ShowTransactions
             }
         }
     }
+
 }

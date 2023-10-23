@@ -2,6 +2,7 @@
 
 namespace App\Modeles;
 
+use App\Enums\UserType;
 use App\Interfaces\Model;
 
 class UserModel implements Model
@@ -11,6 +12,7 @@ class UserModel implements Model
     private string $name;
     private string $email;
     private string $password;
+    // private UserType $type;
 
     public static function getModelName(): string
     {
@@ -66,4 +68,14 @@ class UserModel implements Model
     {
         $this->password = $password;
     }
+
+    // public function getType(): UserType 
+    // {
+    //     return $this->type;
+    // }
+
+    // public function setType(UserType $type): void 
+    // {
+    //     $this->type = $type;
+    // }
 }

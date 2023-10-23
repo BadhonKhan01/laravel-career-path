@@ -2,11 +2,12 @@
 namespace App\Repository;
 
 use App\Database\DB;
+use App\DTO\WebStatus;
 use App\Enums\AppType;
 use App\Interfaces\Model;
 use App\Modeles\UserModel;
-use App\Interfaces\Repository;
 use App\Traits\ErrorTrait;
+use App\Interfaces\Repository;
 
 class UserDBRepository implements Repository
 {
@@ -33,7 +34,8 @@ class UserDBRepository implements Repository
 
         $sql = "INSERT INTO $model (id, name, email, password, account_type, created_at) VALUES (NULL, '$name', '$email', '$password', '$accountType', NOW())";
         if($this->db->insertTable($sql)){
-            $this->error(AppType::WEB_APP, ucfirst($model)." created");
+            WebStatus::setStatus(true);
+            WebStatus::setStatusMessage("Account created successfully");
         }
         
     }
@@ -43,7 +45,6 @@ class UserDBRepository implements Repository
 
         $sql = "SELECT *  FROM `$model`";
         $users = $this->db->getTable($sql);
-
         $userModels = [];
         foreach ($users as $user) {
             $userModel = new UserModel();
