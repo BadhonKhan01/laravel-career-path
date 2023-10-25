@@ -1,6 +1,7 @@
 <?php 
 namespace App\User;
 
+use App\DTO\WebStatus;
 use App\Enums\AppType;
 use App\User\Transaction;
 use App\User\CurrentBalance;
@@ -31,8 +32,14 @@ class Withdraw extends Transaction
     {
         $this->cliInputs();
         if($this->checkBalance()){
-            $this->error($this->apptype, "Sorry! balance not available.");
-            return;
+            if($this->apptype == AppType::CLI_APP || (php_sapi_name() === 'cli' && $this->apptype == AppType::WEB_APP)){
+                $this->error($this->apptype, "Sorry! balance not available.");
+                return;
+            }else{
+                WebStatus::setError(true);
+                WebStatus::setStatusMessage("Sorry! balance not available.");
+                return;
+            }
         }
 
         if(($this->apptype == AppType::CLI_APP)){

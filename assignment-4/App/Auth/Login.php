@@ -26,6 +26,7 @@ class Login extends Authentication implements AppRun
 
     public function cliInputs(){
 
+
         if(isset($_POST) && !empty($_POST)){
             $this->email = $_POST['email'];
             $this->password = $_POST['password'];
@@ -37,8 +38,8 @@ class Login extends Authentication implements AppRun
 
     public function run(): void
     {
-        if (!$this->validate($this->cliInputs())) {
 
+        if (!$this->validate($this->cliInputs())) {
             if($this->apptype == AppType::WEB_APP){
                 WebStatus::setError(true);
                 return;

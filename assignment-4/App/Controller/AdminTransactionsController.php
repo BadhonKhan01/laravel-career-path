@@ -1,15 +1,16 @@
 <?php 
 namespace App\Controller;
 
+use App\DTO\WebStatus;
 use App\Enums\AppType;
-use App\Admin\AllUsers;
 use App\Traits\Redirect;
 use App\Modeles\UserModel;
 use App\Traits\FlashTrait;
 use App\Traits\ViewTraits;
-use App\User\CurrentBalance;
-use App\User\ShowTransactions;
+use App\Admin\ShowTransactions;
 use App\Traits\CheckUserTraits;
+use App\Admin\TransactionByUser;
+
 
 class AdminTransactionsController
 {
@@ -21,18 +22,34 @@ class AdminTransactionsController
 
     function __construct()
     {
-        var_dump('ok');
-        // $this->user = $this->loginUser();
+        $this->user = $this->loginUser();
     }
     
     public function index(){
 
-        var_dump($_GET);
+        $name = $_GET['name'];
+        $email = $_GET['email'];
+        if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
+            $this->flashMessage('message',"Please add valid amount!");
+            $this->back();
+        }
 
-        // $allusers = new AllUsers(AppType::WEB_APP);
-        // $customers = $allusers->run();
+        $transactionByUser = new TransactionByUser(AppType::WEB_APP);
+        $customers = $transactionByUser->run();
 
-        // $this->view('admin/dashboard', compact('customers'));
+        $this->view('admin/customer_transactions', compact('name','customers'));
+    }
+
+    public function transactions(){
+
+        $showTransaction = new ShowTransactions(AppType::WEB_APP);
+        $transactions = $showTransaction->run();
+
+        if(WebStatus::getError()){
+            $this->flashMessage('message',WebStatus::getStatusMessage());
+        }
+        
+        $this->view('admin/transactions', compact('transactions'));
     }
 }
 

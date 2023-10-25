@@ -33,6 +33,9 @@ Router::post('/customer/transfer',[TransferController::class, 'transfer']);
 Router::get('/admin',[AdminAuthController::class, 'login']);
 Router::post('/admin',[AdminAuthController::class, 'login']);
 Router::get('/admin/logout',[AdminAuthController::class, 'logout']);
+Router::get('/admin/add-customer',[AdminAuthController::class, 'addCustomer']);
+Router::post('/admin/add-customer',[AdminAuthController::class, 'addCustomer']);
 
 Router::get('/admin/dashboard',[AdminDashboardController::class, 'index']);
-Router::get('/admin/transactions',[AdminTransactionsController::class, 'index']);
+Router::get('/admin/single-transactions',[AdminTransactionsController::class, 'index']);
+Router::get('/admin/transactions',[AdminTransactionsController::class, 'transactions']);

@@ -27,8 +27,10 @@ class DashboardController
         $currentBalance = new CurrentBalance(AppType::WEB_APP, $this->user);
         $currentBalance = $currentBalance->run();
 
-        $name = $this->user->getName();
+        
 
+        $name = $this->user->getName();
+        
         $showTransaction = new ShowTransactions(AppType::WEB_APP, $this->user);
         $allTranscation = $showTransaction->run();
 

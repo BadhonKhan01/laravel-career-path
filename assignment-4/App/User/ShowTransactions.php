@@ -53,9 +53,11 @@ class ShowTransactions
     
     public function run()
     {
-        if(!$this->deposit && !$this->withdraw ){
-            $this->error($this->apptype, 'Sorry. No transaction found.');
-            return;
+        if($this->apptype == AppType::CLI_APP || (php_sapi_name() === 'cli' && $this->apptype == AppType::WEB_APP)){
+            if(!$this->deposit && !$this->withdraw ){
+                $this->error($this->apptype, 'Sorry. No transaction found.');
+                return;
+            }
         }
 
         $result = array_merge($this->deposit, $this->withdraw);

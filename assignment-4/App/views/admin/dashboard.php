@@ -24,7 +24,7 @@
                 </div>
                 <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
                   <a
-                    href="./add_customer.html"
+                    href="/admin/add-customer"
                     type="button"
                     class="block px-3 py-2 text-sm font-semibold text-center text-white rounded-md shadow-sm bg-sky-600 hover:bg-sky-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600">
                     Add Customer
@@ -59,7 +59,7 @@
                                 <div class="flex-auto min-w-0">
                                   <p
                                     class="text-sm font-semibold leading-6 text-gray-900">
-                                    <a href="/admin/transactions">
+                                    <a href="/admin/single-transactions?name=<?php echo $item['name'] ?>&email=<?php echo $item['email']; ?>">
                                       <span
                                         class="absolute inset-x-0 bottom-0 -top-px"></span>
                                       <?php echo $item['name']; ?>
@@ -67,7 +67,7 @@
                                   </p>
                                   <p class="flex mt-1 text-xs leading-5 text-gray-500">
                                     <a
-                                      href="/admin/transactions"
+                                      href="/admin/single-transactions?name=<?php echo $item['name'] ?>&email=<?php echo $item['email']; ?>"
                                       class="relative truncate hover:underline"
                                       ><?php echo $item['email']; ?></a
                                     >

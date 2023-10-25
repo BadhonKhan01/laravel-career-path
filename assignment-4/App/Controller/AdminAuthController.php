@@ -47,5 +47,15 @@ class AdminAuthController
         session_destroy();
         $this->redirect('/admin');
     }
+
+    public function addCustomer(){
+        if(isset($_POST) && !empty($_POST)){
+            $this->registration = new Registration(AppType::WEB_APP, UserType::USER_ACCOUNT);
+            $this->registration->run();
+            $this->redirect('/admin/dashboard');
+        }else{
+            $this->view('admin/addCustomer');
+        }
+    }
 }
 

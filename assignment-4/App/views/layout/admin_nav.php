@@ -9,13 +9,13 @@
                   <div class="flex space-x-4">
                     <!-- Current: "bg-sky-700 text-white", Default: "text-white hover:bg-sky-500 hover:bg-opacity-75" -->
                     <a
-                      href="./customers.html"
-                      class="px-3 py-2 text-sm font-medium text-white rounded-md bg-sky-700"
+                      href="/admin/dashboard"
+                      class="px-3 py-2 text-sm font-medium text-white rounded-md <?php echo ($_SERVER['REQUEST_URI'] == '/admin/dashboard') ? 'bg-sky-700' :'' ?>"
                       >Customers</a
                     >
                     <a
-                      href="./transactions.html"
-                      class="px-3 py-2 text-sm font-medium text-white rounded-md hover:bg-sky-500 hover:bg-opacity-75"
+                      href="/admin/transactions"
+                      class="px-3 py-2 text-sm font-medium text-white rounded-md hover:bg-sky-500 hover:bg-opacity-75  <?php echo ($_SERVER['REQUEST_URI'] == '/admin/transactions') ? 'bg-sky-700' :'' ?>"
                       >Transactions</a
                     >
                   </div>

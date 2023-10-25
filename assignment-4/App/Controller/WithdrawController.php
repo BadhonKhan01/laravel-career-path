@@ -48,9 +48,10 @@ class WithdrawController
         $withdraw = new Withdraw(AppType::WEB_APP, $this->user);
         $withdraw->run();
 
-        if(WebStatus::getStatus()){
+        if(WebStatus::getStatus() || WebStatus::getError()){
             $this->flashMessage('message',WebStatus::getStatusMessage());
         }
+
         $this->redirect('/customer/withdraw');
     }
 }

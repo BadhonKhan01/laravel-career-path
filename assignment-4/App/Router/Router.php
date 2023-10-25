@@ -31,12 +31,18 @@ class Router
     public static function dispatch(){
 
         $method = $_SERVER['REQUEST_METHOD'];
-        $page = $_SERVER['REQUEST_URI'];
+        $page = parse_url($_SERVER['REQUEST_URI'])['path'];
+        $queryParameters = $_GET;
 
         foreach (static::$list as $item) {
             if($item['page'] === $page && $item['method'] === $method){
                 $controller = new $item['action']['controller']();
-                $controller->{$item['action']['method']}();
+                if(!empty($queryParameters)){
+                    $controller->{$item['action']['method']}($queryParameters);
+                }else{
+                    $controller->{$item['action']['method']}();
+                }
+                
             }
         }
     }

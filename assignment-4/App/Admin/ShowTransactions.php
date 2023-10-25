@@ -52,32 +52,52 @@ class ShowTransactions
         $this->withdraw = $this->withdrawRepository->get( new WithdrawModel() );
     }
     
-    public function run(): void
+    public function run()
     {
-        if(!$this->deposit && !$this->withdraw ){
-            $this->error($this->apptype, 'Sorry. No transaction found.');
-            return;
+        if($this->apptype == AppType::CLI_APP || (php_sapi_name() === 'cli' && $this->apptype == AppType::WEB_APP)){
+            if(!$this->deposit && !$this->withdraw ){
+                $this->error($this->apptype, 'Sorry. No transaction found.');
+                return;
+            }
         }
 
         $result = array_merge($this->deposit, $this->withdraw);
         usort($result, function($a, $b) {
             return strtotime($a->getCreatedAt()) - strtotime($b->getCreatedAt());
         });
-        printf("\n");
-        foreach($result as $item){
-            $status = $item->getStatus();
+        if($this->apptype == AppType::CLI_APP || (php_sapi_name() === 'cli' && $this->apptype == AppType::WEB_APP)){
+            printf("\n");
+            foreach($result as $item){
+                $status = $item->getStatus();
 
-            $getUser = $this->getUser($item->getUserId());
+                $getUser = $this->getUser($item->getUserId());
 
-            if($item->getTransferBy() != "NULL"){
-                $symbol = " < ";
-                if($item instanceof WithdrawModel){
-                    $symbol = " > ";
+                if($item->getTransferBy() != "NULL"){
+                    $symbol = " < ";
+                    if($item instanceof WithdrawModel){
+                        $symbol = " > ";
+                    }
+
+                    $status = $item->getStatus() .$symbol. $item->getTransferBy();
                 }
-
-                $status = $item->getStatus() .$symbol. $item->getTransferBy();
+                printf("%s - %s - %s\n", $getUser->getName(), $item->getAmount(), $status);
             }
-            printf("%s - %s - %s\n", $getUser->getName(), $item->getAmount(), $status);
+        }else{
+            $temp = [];
+            foreach($result as $item){
+                $getUser = $this->getUser($item->getUserId());
+                $temp[] = [
+                    'id' => $item->getId(),
+                    'userName' => $getUser->getName(),
+                    'userEmail' => $getUser->getEmail(),
+                    'userId' => $item->getUserid(),
+                    'amount' => $item->getAmount(),
+                    'status' => $item->getStatus(),
+                    'transferBy' => $item->getTransferBy(),
+                    'createdAt' => $item->getCreatedAt(),
+                ];
+            }
+            return $temp;
         }
     }
 

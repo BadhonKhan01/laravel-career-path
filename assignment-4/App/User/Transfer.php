@@ -5,7 +5,9 @@ use App\DTO\WebStatus;
 use App\Enums\AppType;
 use App\User\Transaction;
 use App\Modeles\UserModel;
+use App\Traits\ErrorTrait;
 use App\DTO\TransactionType;
+use App\User\CurrentBalance;
 use App\Modeles\DepositModel;
 use App\Services\UserService;
 use App\Modeles\WithdrawModel;
@@ -13,8 +15,10 @@ use App\Services\TransactionService;
 
 class Transfer
 {
+    use ErrorTrait;
     public AppType $apptype;
     public UserModel $user; 
+    public CurrentBalance $balance;
     public $dipositHolder; 
     public mixed $userService;
     public string $email;
@@ -64,14 +68,18 @@ class Transfer
     {
         $this->cliInputs();
         $this->findUser();
-        if($this->apptype == AppType::CLI_APP || (php_sapi_name() === 'cli' && $this->apptype == AppType::WEB_APP)){
-            if(!$this->dipositHolder){
-                printf("Sorry! users not available\n");
-                return;   
+        if($this->checkBalance()){
+            if($this->apptype == AppType::CLI_APP || (php_sapi_name() === 'cli' && $this->apptype == AppType::WEB_APP)){
+                $this->error($this->apptype, "Sorry! balance not available.");
+                return;
+            }else{
+                WebStatus::setError(true);
+                WebStatus::setStatusMessage("Sorry! balance not available.");
+                return;
             }
         }
 
-        if(!php_sapi_name() === 'cli' && $this->apptype == AppType::WEB_APP){
+        if(!php_sapi_name() === 'cli' && $this->apptype == AppType::WEB_APP || !$this->dipositHolder){
             WebStatus::setError(true);
             WebStatus::setStatusMessage("Sorry! users not available");
             return;
@@ -120,5 +128,15 @@ class Transfer
                 'setTransferBy' => $this->user->getEmail(),
             ]);
         }
+    }
+
+    public function checkBalance(){
+        $this->balance = new CurrentBalance($this->apptype, $this->user);
+        $calculateBalance = $this->balance->calculate();
+        $realBalance = ($calculateBalance - $this->amount);
+        if($realBalance < 0 || $realBalance == 0){
+            return TRUE;
+        }
+        return FALSE;
     }
 }

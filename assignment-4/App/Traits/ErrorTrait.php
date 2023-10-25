@@ -12,8 +12,10 @@ trait ErrorTrait
                 printf($msg."\n");
             printf("\n");
         }else{
-            header("Location: " . $_SERVER['HTTP_REFERER']);
-            exit;
+            if(isset($_SERVER['HTTP_REFERER'])){
+                header("Location: " . $_SERVER['HTTP_REFERER']);
+                exit;
+            }
         }
     }
 }

@@ -33,16 +33,19 @@ class AuthController
     }
 
     public function login(){
+        
         if(isset($_POST) && !empty($_POST)){
+            
             $this->login = new Login(AppType::WEB_APP, UserType::USER_ACCOUNT);
-
             $isLogin = $this->login->run();
+            
             if(WebStatus::getError()){
                 $this->flashMessage('message',WebStatus::getStatusMessage());
                 $this->redirect('/login');
             }
 
         }else{
+            
             $this->view('auth/login');
         }
     }
